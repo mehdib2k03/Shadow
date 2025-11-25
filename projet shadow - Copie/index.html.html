@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shadow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="projet-son.css" />
+</head>
+<body>
+
+  <!-- HEADER PRINCIPAL (sera caché pendant le gate) -->
+  <header>
+    <h1>Shadow</h1>
+  </header>
+
+  <!-- GATE / ÉCRAN DE CHOIX -->
+  <section id="gate" class="gate-screen">
+    <div class="gate-card">
+      <h1>Bienvenue</h1>
+      <p>Choisis ton mode</p>
+
+      <button id="btn-auditeur" class="gate-btn">Mode Auditeur</button>
+      <button id="btn-editeur" class="gate-btn">Mode Éditeur</button>
+    </div>
+  </section>
+
+  <!-- BARRE D'ACCUEIL (CACHÉE AU DÉPART) -->
+  <header id="app-header" class="hidden">
+    <div class="topbar">
+      <h2 id="mode-label">Mode</h2>
+      <button id="switch-mode">Changer</button>
+    </div>
+  </header>
+
+  <!-- APP -->
+  <main>
+
+    <!-- ACCUEIL -->
+    <section id="view-home" class="view">
+      <h2>Récemment ajoutés</h2>
+      <div id="recent-xl" class="recent-xl"></div>
+
+      <h3 class="recent-subtitle">Derniers sons</h3>
+      <div id="recent-small" class="recent-small"></div>
+    </section>
+
+    <!-- ÉCOUTE -->
+    <section id="view-listen" class="view">
+      <section id="player">
+        <img id="cover" src="" alt="Pochette">
+        <h3 id="title">Titre</h3>
+
+        <audio id="audio"></audio>
+
+        <div class="timeline-wrap">
+          <span id="current-time">0:00</span>
+          <input type="range" id="progress" value="0" min="0" max="100" step="0.1">
+          <span id="duration">0:00</span>
+        </div>
+
+        <div class="player-controls">
+          <button class="mini-btn" onclick="toggleShuffle()">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="white">
+              <path d="M3 7h4.5l4 4-1.4 1.4-3.3-3.3H3V7zm14.5 0H21v2h-3.5l-3.3 3.3-1.4-1.4 4-4z"/>
+              <path d="M3 17h4.5l3.3-3.3 1.4 1.4-4 4H3v-2zm14.5 0H21v2h-3.5l-4-4 1.4-1.4 3.3 3.3z"/>
+            </svg>
+          </button>
+
+          <div class="main-controls">
+            <button class="ctrl-btn" onclick="prevTrack()">
+              <svg width="36" height="36" fill="white" viewBox="0 0 24 24">
+                <path d="M6 6h2v12H6zm3 6 8-6v12z"/>
+              </svg>
+            </button>
+
+            <button class="play-btn" onclick="togglePlay()">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                <polygon points="8,5 20,12 8,19"/>
+              </svg>
+            </button>
+
+            <button class="ctrl-btn" onclick="nextTrack()">
+              <svg width="36" height="36" fill="white" viewBox="0 0 24 24">
+                <path d="M16 6h2v12h-2zm-10 12V6l8 6z"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="mini-btn" onclick="toggleLoop()">
+            <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+              <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <section id="library">
+        <h2>Discographie</h2>
+        <div id="track-list"></div>
+      </section>
+    </section>
+
+    <!-- IMPORT -->
+    <section id="view-import" class="view">
+      <h2>Importer un son</h2>
+
+      <form id="import-form" class="import-form">
+        <label>
+          Titre du son
+          <input id="import-title" type="text" placeholder="ex: Nouveau son" required>
+        </label>
+
+        <label>
+          Fichier audio (mp3/wav)
+          <input id="import-audio" type="file"
+                 accept=".mp3,.wav,audio/mpeg,audio/wav,audio/*" required>
+        </label>
+
+        <label>
+          Cover (optionnelle)
+          <input id="import-cover" type="file" accept="image/*">
+        </label>
+
+        <button type="submit" class="import-btn">Ajouter</button>
+        <p class="import-note">Astuce : évite les mp3 trop lourds pour que ça reste fluide.</p>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- MINI PLAYER -->
+  <div id="mini-player" class="mini-player hidden">
+    <img id="mini-cover" class="mini-cover" src="" alt="cover">
+    <div class="mini-info" onclick="showView('listen')">
+      <span id="mini-title">Titre du son</span>
+    </div>
+    <div class="mini-controls">
+      <button class="mini-ctrl" onclick="togglePlay()">
+        <svg id="mini-play-icon" fill="white" width="26" height="26" viewBox="0 0 24 24">
+          <polygon points="8,5 20,12 8,19"/>
+        </svg>
+      </button>
+      <button class="mini-ctrl" onclick="nextTrack()">
+        <svg fill="white" width="26" height="26" viewBox="0 0 24 24">
+          <path d="M16 6h2v12h-2zm-10 12V6l8 6z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- NAVBAR BAS -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="home">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5.5v-6.5h-3V21H5a1 1 0 0 1-1-1V10.5z"/>
+        </svg>
+      </span>
+      <span class="nav-text">Accueil</span>
+    </button>
+
+    <button class="nav-btn" data-view="listen">
+      <span class="nav-icon">🎧</span>
+      <span class="nav-text">Écoute</span>
+    </button>
+
+    <!-- bouton import visible seulement en éditeur -->
+    <button class="nav-import" data-view="import">
+      <span class="nav-icon">＋</span>
+      <span class="nav-text">Import</span>
+    </button>
+  </nav>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Ton JS -->
+  <script src="projet-son.js"></script>
+</body>
+</html>
